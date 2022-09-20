@@ -1,13 +1,31 @@
 import os
 
+from dotenv import load_dotenv
+
 SECRET_KEY = os.urandom(32)
+
 # Grabs the folder where the script runs.
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Enable debug mode.
-DEBUG = True
+# Take the environment variables from .env file
+load_dotenv(os.path.join(basedir, ".env"))
 
-# Connect to the database
 
-SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
-SQLALCHEMY_TRACK_MODIFICATIONS=False
+class Config(object):
+    # ...
+    SECRET_KEY = SECRET_KEY
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    TESTING = False
+
+
+class ProductionConfig(Config):
+
+    DEBUG = False
+
+
+class DevelopmentConfig(Config):
+
+    DEVELOPMENT = True
+    DEBUG = True
+    ENV = "development"
