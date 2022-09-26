@@ -172,35 +172,42 @@ def create_venue_submission():  # sourcery skip: raise-specific-error
     # Insert form data as a new Venue record in the db, instead
     # Modify data to be the data object returned from db insertion
     error = False
-    try:
-        # validate form
-        venue = Venue(
-            name=request.form["name"],
-            city=request.form["city"],
-            state=request.form["state"],
-            address=request.form["address"],
-            phone=request.form["phone"],
-            genres=request.form.getlist("genres"),
-            facebook_link=request.form["facebook_link"],
-            image_link=request.form["image_link"],
-            website_link=request.form["website_link"],
-            seeking_talent="seeking_talent" in request.form,
-            seeking_description=request.form["seeking_description"],
-        )
-        db.session.add(venue)
-        db.session.commit()
-    except Exception:
-        error = True
-        db.session.rollback()
-    finally:
-        db.session.close()
-    if error:
-        flash(
-            "An error occurred. Venue " + request.form["name"] + " could not be listed."
-        )
+    # validate form data input
+    form = VenueForm(request.form)
+    if form.validate():
+        try:
+            venue = Venue(
+                name=form.name.data,
+                city=form.city.data,
+                state=form.state.data,
+                address=form.address.data,
+                phone=form.phone.data,
+                genres=form.genres.data,
+                facebook_link=form.facebook_link.data,
+                image_link=form.image_link.data,
+                website_link=form.website_link.data,
+                seeking_talent=form.seeking_talent.data,
+                seeking_description=form.seeking_description.data,
+            )
+            db.session.add(venue)
+            db.session.commit()
+        except Exception as e:
+            error = True
+            db.session.rollback()
+            print(f"Error: {e}")
+        finally:
+            db.session.close()
     else:
-        flash("Venue " + request.form["name"] + " was successfully listed!")
+        print(form.errors)
+        flash("An error occurred. Venue " + request.form["name"] + " could not be listed.")
+        return render_template("forms/new_venue.html", form=form)
 
+    # on successful db insert, flash success
+    if error:
+        flash("An error occurred. Venue " + request.form["name"] + " could not be listed.")
+    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
+    if not error:
+        flash("Venue " + request.form["name"] + " was successfully listed!")
     return render_template("pages/home.html")
 
 
@@ -460,39 +467,40 @@ def create_artist_form():
 @route_blueprint.route("/artists/create", methods=["POST"])
 def create_artist_submission():
     # Create a new artist object and add it to the database
-   
     error = False
-    try:
-        artist = Artist(
-            name=request.form["name"],
-            city=request.form["city"],
-            state=request.form["state"],
-            phone=request.form["phone"],
-            genres=request.form.getlist("genres"),
-            facebook_link=request.form["facebook_link"],
-            website_link=request.form["website_link"],
-            image_link=request.form["image_link"],
-            seeking_venue="seeking_venue" in request.form,
-            seeking_description=request.form["seeking_description"],
-        )
+    form = ArtistForm(request.form)
+    if form.validate():
+        try:
+            artist = Artist(
+                name=request.form["name"],
+                city=request.form["city"],
+                state=request.form["state"],
+                phone=request.form["phone"],
+                genres=request.form.getlist("genres"),
+                facebook_link=request.form["facebook_link"],
+                image_link=request.form["image_link"],
+                website_link=request.form["website_link"],
+                seeking_venue="seeking_venue" in request.form,
+                seeking_description=request.form["seeking_description"],
+            )
+            db.session.add(artist)
+            db.session.commit()
+        except Exception:
+            error = True
+            db.session.rollback()
+        finally:
+            db.session.close()
+        if error:
+            flash(
+                "An error occurred. Artist "
+                + request.form["name"]
+                + " could not be listed."
+            )
+        else:
+            flash("Artist " + request.form["name"] + " was successfully listed!")
+    else:
+        flash(form.errors)
 
-        db.session.add(artist)
-        db.session.commit()
-    except Exception:
-        error = True
-        db.session.rollback()
-        print(sys.exc_info())
-    finally:
-        db.session.close()
-    if error:
-        flash(
-            "An error occurred. Artist "
-            + request.form["name"]
-            + " could not be listed."
-        )
-    if not error:
-        # on successful db insert, flash success
-        flash("Artist " + request.form["name"] + " was successfully listed!")
     return render_template("pages/home.html")
 
 
