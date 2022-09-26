@@ -47,6 +47,25 @@ class VenueForm(Form):
     seeking_talent = BooleanField("seeking_talent")
 
     seeking_description = StringField("seeking_description")
+    
+    
+    def validate(self):
+        if not super().validate():
+            return False
+
+        if not validate_phone(self.phone.data):
+            self.phone.errors.append("Invalid phone number")
+            return False
+        
+        if self.state.data not in dict(States.choices()).keys():
+            self.state.errors.append("Invalid state")
+            return False
+        
+        for genre in self.genres.data:
+            if genre not in dict(Genres.choices()).keys():
+                self.genres.errors.append("Invalid genre")
+              
+        return True
 
 
 
@@ -58,7 +77,6 @@ class ArtistForm(Form):
         "state", validators=[DataRequired()], choices=States.choices(), coerce=str
     )
     phone = StringField(
-        # implement phone validation logic for state
         "phone",
         validators=[DataRequired()],
     )
@@ -67,7 +85,6 @@ class ArtistForm(Form):
         "genres", validators=[DataRequired()], choices=Genres.choices(), coerce=str
     )
     facebook_link = StringField(
-        # implement enum restriction
         "facebook_link",
         validators=[URL()],
     )
@@ -78,4 +95,21 @@ class ArtistForm(Form):
 
     seeking_description = StringField("seeking_description")
 
-   
+    def validate(self):
+        if not super().validate():
+            return False
+
+        if not validate_phone(self.phone.data):
+            self.phone.errors.append("Invalid phone number")
+            return False
+
+        if self.state.data not in dict(States.choices()).keys():
+            self.state.errors.append("Invalid state")
+            return False
+
+        for genre in self.genres.data:
+            if genre not in dict(Genres.choices()).keys():
+                self.genres.errors.append("Invalid genre")
+                return False
+
+        return True
