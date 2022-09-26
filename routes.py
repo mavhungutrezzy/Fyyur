@@ -168,11 +168,10 @@ def create_venue_form():
 
 
 @route_blueprint.route("/venues/create", methods=["POST"])
-def create_venue_submission():  # sourcery skip: raise-specific-error
+def create_venue_submission():  
     # Insert form data as a new Venue record in the db, instead
     # Modify data to be the data object returned from db insertion
     error = False
-    # validate form data input
     form = VenueForm(request.form)
     if form.validate():
         try:
@@ -198,7 +197,6 @@ def create_venue_submission():  # sourcery skip: raise-specific-error
         finally:
             db.session.close()
     else:
-        print(form.errors)
         flash("An error occurred. Venue " + request.form["name"] + " could not be listed.")
         return render_template("forms/new_venue.html", form=form)
 
