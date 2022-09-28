@@ -44,7 +44,7 @@ npm install bootstrap@3
 
 
 ## Development Setup
-1. **Clone project on your local machine
+1. Clone project on your local machine
 ```
 git clone https://github.com/mavhungutrezzy/Fyyur
 cd Fyyur
