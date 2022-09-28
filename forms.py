@@ -13,7 +13,7 @@ from wtforms import (
 from wtforms.validators import URL, DataRequired
 
 from enums import Genres, States
-from models import Venue
+from models.models import Venue
 
 
 def validate_phone(phone):

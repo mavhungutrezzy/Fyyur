@@ -9,7 +9,7 @@ from flask import (Blueprint, Flask, abort, flash, redirect, render_template,
 
 from database import db
 from forms import *
-from models import Artist, Show, Venue
+from models.models import Artist, Show, Venue
 
 route_blueprint = Blueprint("routes", __name__)
 
@@ -21,9 +21,7 @@ route_blueprint = Blueprint("routes", __name__)
 
 @route_blueprint.route("/")
 def index():
-    print("HELLO")
     return render_template("pages/home.html")
-
 
 # * -------------------------------------------------------------------------- #
 # *  Venues
