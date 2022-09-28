@@ -29,3 +29,10 @@ class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
     ENV = "development"
+
+class TestingConfig(Config):
+
+    SQLALCHEMY_DATABASE_URI = os.environ.get("TEST_DATABASE_URL")
+    TESTING = True
+    DEBUG = True
+    ENV = "testing"

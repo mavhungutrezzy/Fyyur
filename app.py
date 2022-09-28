@@ -55,6 +55,11 @@ def create_app():
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
         app.logger.info("errors")
+        
+        
+    if app.config["ENV"] == "testing":
+        with app.app_context():
+            database.db.create_all()
 
     return app
 
