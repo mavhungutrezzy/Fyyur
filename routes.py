@@ -2,13 +2,22 @@
 # * Imports
 # *----------------------------------------------------------------------------#
 
+import datetime
 import sys
 
-from flask import (Blueprint, Flask, abort, flash, redirect, render_template,
-                   request, url_for)
+from flask import (
+    Blueprint,
+    Flask,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 
 from database import db
-from forms import *
+from forms import ArtistForm, VenueForm, ShowForm
 from models.models import Artist, Show, Venue
 
 route_blueprint = Blueprint("routes", __name__)
@@ -22,6 +31,7 @@ route_blueprint = Blueprint("routes", __name__)
 @route_blueprint.route("/")
 def index():
     return render_template("pages/home.html")
+
 
 # * -------------------------------------------------------------------------- #
 # *  Venues
@@ -43,7 +53,7 @@ def venues():
                         [
                             show
                             for show in venue.shows
-                            if show.start_time > datetime.now()
+                            if show.start_time > datetime.datetime.now()
                         ]
                     ),
                 }
@@ -166,7 +176,7 @@ def create_venue_form():
 
 
 @route_blueprint.route("/venues/create", methods=["POST"])
-def create_venue_submission():  
+def create_venue_submission():
     # Insert form data as a new Venue record in the db, instead
     # Modify data to be the data object returned from db insertion
     error = False
@@ -195,12 +205,16 @@ def create_venue_submission():
         finally:
             db.session.close()
     else:
-        flash("An error occurred. Venue " + request.form["name"] + " could not be listed.")
+        flash(
+            "An error occurred. Venue " + request.form["name"] + " could not be listed."
+        )
         return render_template("forms/new_venue.html", form=form)
 
     # on successful db insert, flash success
     if error:
-        flash("An error occurred. Venue " + request.form["name"] + " could not be listed.")
+        flash(
+            "An error occurred. Venue " + request.form["name"] + " could not be listed."
+        )
     # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
     if not error:
         flash("Venue " + request.form["name"] + " was successfully listed!")

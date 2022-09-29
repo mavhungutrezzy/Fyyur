@@ -154,4 +154,3 @@ class Show(db.Model):
 
     def __str__(self):
         return f"{self.artist_id} {self.venue_id} {self.start_time}"
-

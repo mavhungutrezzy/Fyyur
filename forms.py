@@ -56,8 +56,7 @@ class VenueForm(Form):
     seeking_talent = BooleanField("seeking_talent")
 
     seeking_description = StringField("seeking_description")
-    
-    
+
     def validate(self):
         if not super().validate():
             return False
@@ -65,28 +64,27 @@ class VenueForm(Form):
         if not validate_phone(self.phone.data):
             self.phone.errors.append("Invalid phone number")
             return False
-        
+
         if validate_new_venue(self, self.name):
             flash("Venue already exists")
             self.name.errors.append("Venue already exists")
             return False
-        
+
         if self.state.data not in dict(States.choices()).keys():
             flash("Invalid state")
             self.state.errors.append("Invalid state")
             return False
-        
+
         for genre in self.genres.data:
             if genre not in dict(Genres.choices()).keys():
                 flash("Invalid genre")
                 self.genres.errors.append("Invalid genre")
-              
+
         return True
 
 
-
 class ArtistForm(Form):
-    
+
     name = StringField("name", validators=[DataRequired()])
     city = StringField("city", validators=[DataRequired()])
     state = SelectField(
