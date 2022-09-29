@@ -18,7 +18,7 @@ def create_app():
     # *  App Config
     # *  ----------------------------------------------------------------
 
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="static")
     moment = Moment(app)
     app.config.from_object("config.DevelopmentConfig")
     database.init_app(app)
