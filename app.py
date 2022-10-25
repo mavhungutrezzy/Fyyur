@@ -11,6 +11,8 @@ from flask_moment import Moment
 import database
 from routes import route_blueprint
 
+from utils.caching import cache
+
 
 def create_app():
 
@@ -23,7 +25,9 @@ def create_app():
     app.config.from_object("config.DevelopmentConfig")
     database.init_app(app)
     migrate = Migrate(app, database.db)
-
+    cache.init_app(
+        app, config={"CACHE_TYPE": "SimpleCache", "CACHE_DEFAULT_TIMEOUT": 300}
+    )
     app.register_blueprint(route_blueprint)
 
     # *----------------------------------------------------------------------------#

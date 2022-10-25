@@ -16,6 +16,7 @@ from flask import (
     url_for,
 )
 
+from utils.caching import cache
 from database import db
 from forms import ArtistForm, VenueForm, ShowForm
 from models.models import Artist, Show, Venue
@@ -29,6 +30,7 @@ route_blueprint = Blueprint("routes", __name__)
 
 
 @route_blueprint.route("/")
+@cache.cached(timeout=50)
 def index():
     return render_template("pages/home.html")
 
@@ -39,6 +41,7 @@ def index():
 
 
 @route_blueprint.route("/venues")
+@cache.cached(timeout=50)
 def venues():
     venues_list = Venue.query.distinct(Venue.city, Venue.state).all()
     data = [
@@ -67,6 +70,7 @@ def venues():
 
 
 @route_blueprint.route("/venues/search", methods=["POST"])
+@cache.cached(timeout=50)
 def search_venues():
     # Implement search on artists with partial string search
     search_term = request.form.get("search_term", "")
@@ -93,6 +97,7 @@ def search_venues():
 
 
 @route_blueprint.route("/venues/<int:venue_id>")
+@cache.cached(timeout=50)
 def show_venue(venue_id):
     # shows the venue page with the given venue_id
     # replace with real venue data from the venues table, using venue_id
@@ -168,6 +173,7 @@ def show_venue(venue_id):
 
 
 @route_blueprint.route("/venues/create", methods=["GET"])
+@cache.cached(timeout=50)
 def create_venue_form():
     # Renders the form to create a new venue
     form = VenueForm()
@@ -176,6 +182,7 @@ def create_venue_form():
 
 
 @route_blueprint.route("/venues/create", methods=["POST"])
+@cache.cached(timeout=50)
 def create_venue_submission():
     # Insert form data as a new Venue record in the db, instead
     # Modify data to be the data object returned from db insertion
@@ -252,6 +259,7 @@ def delete_venue(venue_id):
 
 
 @route_blueprint.route("/artists")
+@cache.cached(timeout=50)
 def artists():
     # Get the artists from the database
     artists = Artist.query.all()
@@ -260,6 +268,7 @@ def artists():
 
 
 @route_blueprint.route("/artists/search", methods=["POST"])
+@cache.cached(timeout=50)
 def search_artists():
     # Search on artist records with partial string search.
     search_term = request.form.get("search_term", "")
@@ -286,6 +295,7 @@ def search_artists():
 
 
 @route_blueprint.route("/artists/<int:artist_id>")
+@cache.cached(timeout=50)
 def show_artist(artist_id):
     # shows the artist page with the given artist_id
     artist = Artist.query.get(artist_id)
@@ -468,6 +478,7 @@ def edit_venue_submission(venue_id):
 
 
 @route_blueprint.route("/artists/create", methods=["GET"])
+@cache.cached(timeout=50)
 def create_artist_form():
     # Render the form to create a new artist
     form = ArtistForm()
@@ -475,6 +486,7 @@ def create_artist_form():
 
 
 @route_blueprint.route("/artists/create", methods=["POST"])
+@cache.cached(timeout=50)
 def create_artist_submission():
     # Create a new artist object and add it to the database
     error = False
@@ -520,6 +532,7 @@ def create_artist_submission():
 
 
 @route_blueprint.route("/shows")
+@cache.cached(timeout=50)
 def shows():
     # displays list of shows at /shows using Join to get venue and artist info
     shows = Show.query.join(Venue, Show.venue_id == Venue.id).join(
@@ -541,6 +554,7 @@ def shows():
 
 
 @route_blueprint.route("/shows/create")
+@cache.cached(timeout=50)
 def create_shows():
     # renders form
     form = ShowForm()
@@ -548,6 +562,7 @@ def create_shows():
 
 
 @route_blueprint.route("/shows/create", methods=["POST"])
+@cache.cached(timeout=50)
 def create_show_submission():
     # called to create new shows in the db, upon submitting new show listing form
     error = False
